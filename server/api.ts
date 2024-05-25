@@ -9,6 +9,16 @@ const database = Rebar.database.useDatabase();
 const api = Rebar.useApi();
 const autoincrementApi = api.get('autoincrement-api');
 
+export const useRandomPlate = () => {
+    let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+    let plate = '';
+    for (let i = 0; i < 6; i++) {
+        plate += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return plate;
+}
+
 export const useVehiclesApi = () => {
     const vehiclesWithAccessForPlayer = async (player: alt.Player) => {
         const character = useCharacter(player).get();
@@ -22,10 +32,8 @@ export const useVehiclesApi = () => {
     };
 
     const createVehicle = async (vehicle: VehicleDocument) => {
-        console.log(vehicle);
-        console.log('test 2');
         vehicle.uid = await autoincrementApi.getNextIdForCollection(CollectionNames.Vehicles);
-        console.log('test 3');
+        vehicle.numberPlateText = useRandomPlate();
         await database.create(vehicle, CollectionNames.Vehicles);
         return;
     };
